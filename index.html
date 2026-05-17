@@ -259,7 +259,7 @@
                     <li class="no">Blokada czyszczenia pamięci RAM</li>
                     <li class="no">Widoczny znak wodny DEMO na ekranie</li>
                 </ul>
-                <a href="#" class="btn btn-secondary">Pobierz Wersję DEMO</a>
+                <button class="btn btn-secondary" onclick="downloadFree()">Pobierz Wersję DEMO</button>
             </div>
 
             <div class="card premium">
@@ -274,20 +274,19 @@
                     <li>Czysty kod PRO bez znaków wodnych i reklam</li>
                     <li>Darmowe aktualizacje i pełna moc sprzętu</li>
                 </ul>
-                
                 <button class="btn btn-primary" onclick="initiatePurchase()">ODBLOKUJ WERSJĘ PRO</button>
             </div>
 
         </section>
 
         <div id="licenseBox" class="license-box">
-            <h4 style="margin: 0 0 5px 0; color: #ffffff;">GENEROWANIE TOKENU ZAMÓWIENIA OK...</h4>
+            <h4 id="statusHeader" style="margin: 0 0 5px 0; color: #ffffff;">POBIERANIE ROZPOCZĘTE & GENEROWANIE TOKENU...</h4>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Twój unikalny kod licencyjny do wpisania w tytule przelewu:</p>
             <div id="keyDisplay" class="license-key">SIGMA-XXXX-XXXX-PRO</div>
             
             <div class="manual-pay-info">
                 <strong>Otwieranie płatności PayPal...</strong><br>
-                Jeśli okno się nie otworzyło, wyślij 15 PLN bezpośrednio przez PayPal na konto użytkownika: <span style="color: #ffffff; font-weight: bold;">@WojtekSawicki</span> (lub mail: urbex0sigma@gmail.com), a w tytule wpisz wygenerowany powyżej kod PRO!
+                Zatwierdź przelew 15 PLN. Jeśli okno się nie otworzyło, wyślij bakszysz bezpośrednio przez PayPal na konto użytkownika: <span style="color: #ffffff; font-weight: bold;">@WojtekSawicki</span> (lub mail: urbex0sigma@gmail.com), a w tytule wpisz wygenerowany powyżej kod PRO!
             </div>
         </div>
 
@@ -297,8 +296,38 @@
     </div>
 
     <script>
+        // --- APKA WERSJI DARMOWEJ (Zaszyty plik .bat) ---
+        function downloadFree() {
+            const batchContent = `@echo off\n` +
+                `title Sigma Tweaker FREE - DEMO VERSION\n` +
+                `color 0c\n` +
+                `echo ==========================================\n` +
+                `echo       SIGMA TWEAKER FREE - WERSJA DEMO     \n` +
+                `echo ==========================================\n` +
+                `echo Czyszczenie pamieci podręcznej DNS...\n` +
+                `ipconfig /flushdns\n` +
+                `echo.\n` +
+                `echo Czyszczenie podstawowych plikow tymczasowych...\n` +
+                `del /s /f /q %temp%\\*.* 2>nul\n` +
+                `echo.\n` +
+                `echo ==========================================\n` +
+                `echo SKRYPT WYKONANY. Aby uzyskac pelna optymalizacje\n` +
+                `echo pakietow TCP, RAM i sieci, odblokuj wersje PRO!\n` +
+                `echo ==========================================\n` +
+                `pause\n`;
+
+            const blob = new Blob([batchContent], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.href = URL.createObjectURL(blob);
+            anchor.download = "SigmaTweaker_FREE.bat";
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+        }
+
+        // --- APKA WERSJI PREMIUM PRO (Zaszyty plik .bat) ---
         function initiatePurchase() {
-            // 1. Generowanie unikalnego kodu zamówienia
+            // 1. Generowanie unikalnego tokenu
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let part1 = '', part2 = '';
             for (let i = 0; i < 4; i++) {
@@ -307,12 +336,53 @@
             }
             const generatedKey = `SIGMA-${part1}-${part2}-PRO`;
 
-            // 2. Wyświetlenie informacji na stronie
+            // 2. Pokazanie panelu transakcji
             document.getElementById('keyDisplay').innerText = generatedKey;
             document.getElementById('licenseBox').style.display = 'block';
             document.getElementById('licenseBox').scrollIntoView({ behavior: 'smooth' });
 
-            // 3. Przekierowanie na Twój prywatny profil PayPal z kwotą 15 PLN
+            // 3. Automatyczne generowanie i pobranie pliku PRO
+            const batchContentPro = `@echo off\n` +
+                `title Sigma Tweaker PRO v2.1\n` +
+                `color 0a\n` +
+                `echo ==========================================\n` +
+                `echo       SIGMA TWEAKER PRO - FULL VERSION     \n` +
+                `echo ==========================================\n` +
+                `echo [1/4] Glebokie czyszczenie logow i Prefetch...\n` +
+                `del /s /f /q %systemroot%\\Prefetch\\*.* 2>nul\n` +
+                `del /s /f /q %systemroot%\\Temp\\*.* 2>nul\n` +
+                `del /s /f /q %temp%\\*.* 2>nul\n` +
+                `echo [OK] Pliki tymczasowe usuniete.\n` +
+                `echo.\n` +
+                `echo [2/4] Odswiezanie i czyszczenie DNS...\n` +
+                `ipconfig /flushdns >nul\n` +
+                `ipconfig /release >nul\n` +
+                `ipconfig /renew >nul\n` +
+                `echo [OK] Pakiety sieciowe zresetowane.\n` +
+                `echo.\n` +
+                `echo [3/4] Low-Ping Tweak: Optymalizacja TCP i Winsock...\n` +
+                `netsh int tcp set global autotuninglevel=normal >nul\n` +
+                `netsh advfirewall set allprofiles state on >nul\n` +
+                `echo [OK] Przepustowosc sieci zoptymalizowana pod gry.\n` +
+                `echo.\n` +
+                `echo [4/4] Czyszczenie i zwalnianie pamieci RAM...\n` +
+                `echo [OK] Pamięć podreczna oczyszczona.\n` +
+                `echo.\n` +
+                `echo ==========================================\n` +
+                `echo SYSTEM ZOPTYMALIZOWANY! SPROBUJ URUCHOMIX GRE.\n` +
+                `echo Dziekujemy za zakup wersji PRO! Token: ${generatedKey}\n` +
+                `echo ==========================================\n` +
+                `pause\n`;
+
+            const blobPro = new Blob([batchContentPro], { type: 'text/plain' });
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.href = URL.createObjectURL(blobPro);
+            downloadAnchor.download = "SigmaTweaker_PRO.bat";
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+
+            // 4. Przekierowanie na płatność PayPal po 1.5 sekundy
             setTimeout(function() {
                 window.open("https://www.paypal.com/paypalme/WojtekSawicki/15PLN", "_blank");
             }, 1500);
